@@ -1,0 +1,59 @@
+pool:
+  name: Azure Pipelines
+variables:
+  containerregistrytype: 'Container Registry'
+
+steps:
+- task: Docker@0
+  displayName: 'Build an image'
+  inputs:
+    containerregistrytype: '$(Parameters.containerregistrytype)'
+    dockerRegistryConnection: Quay.io
+    dockerFile: '**/Containerfile'
+    imageName: 'quay.io/stauil/nodejs-welcome:$(Build.BuildId)'
+    includeLatestTag: true
+
+- task: Docker@0
+  displayName: 'Push an image'
+  inputs:
+    containerregistrytype: 'Container Registry'
+    dockerRegistryConnection: Quay.io
+    action: 'Push an image'
+    imageName: 'quay.io/stauil/nodejs-welcome:$(Build.BuildId)'
+    includeLatestTag: true
+
+- task: redhat.openshift-vsts.oc-cmd-task.oc-cmd@3
+  displayName: 'Create Namespace - Image Deployment'
+  inputs:
+    openshiftService: 'OpenShift Cluster'
+    cmd: 'oc new-project nodejs-welcome-image'
+
+- task: redhat.openshift-vsts.oc-cmd-task.oc-cmd@3
+  displayName: 'Deploy Image '
+  inputs:
+    openshiftService: 'OpenShift Cluster'
+    cmd: 'oc new-app --name=''nodejs-welcome'' --image="quay.io/stauil/nodejs-welcome:latest" -n nodejs-welcome-image'
+
+- task: redhat.openshift-vsts.oc-cmd-task.oc-cmd@3
+  displayName: 'Expose Route -  Image Deployment'
+  inputs:
+    openshiftService: 'OpenShift Cluster'
+    cmd: 'oc expose service/nodejs-welcome -n nodejs-welcome-image'
+
+- task: redhat.openshift-vsts.oc-cmd-task.oc-cmd@3
+  displayName: 'Create Namespace - STI'
+  inputs:
+    openshiftService: 'OpenShift Cluster'
+    cmd: 'oc new-project nodejs-welcome-sti'
+
+- task: redhat.openshift-vsts.oc-cmd-task.oc-cmd@3
+  displayName: 'Deploy with STI Build'
+  inputs:
+    openshiftService: 'OpenShift Cluster'
+    cmd: 'oc new-app --name=''nodejs-welcome'' nodejs:18-ubi8-minimal~https://github.com/na-launch/azure-pipelines-demo -n nodejs-welcome-sti'
+
+- task: redhat.openshift-vsts.oc-cmd-task.oc-cmd@3
+  displayName: 'Expose Route - STI Build'
+  inputs:
+    openshiftService: 'OpenShift Cluster'
+    cmd: 'oc expose service/nodejs-welcome -n nodejs-welcome-sti'
