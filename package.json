@@ -1,0 +1,14 @@
+{
+    "name": "nodejs-welcome",
+    "version": "1.0.0",
+    "description": "Node Welcome App",
+    "author": "Samuel Tauil <stauil@redhat.com>",
+    "main": "server.js",
+    "scripts": {
+      "start": "./node_modules/nodemon/bin/nodemon.js server.js"
+    },
+    "dependencies": {
+      "express": "^4.13.3",
+      "nodemon": "^1.11.0"
+    }
+  }
