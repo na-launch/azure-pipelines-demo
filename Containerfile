@@ -1,4 +1,4 @@
-FROM registry.redhat.io/ubi8/nodejs-18-minimal
+FROM registry.access.redhat.com/ubi8/nodejs-18-minimal:1-138
 
 ADD server.js .
 ADD package.json .
