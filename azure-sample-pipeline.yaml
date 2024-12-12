@@ -46,7 +46,7 @@ steps:
   displayName: 'Expose Route -  Image Deployment'
   inputs:
     openshiftService: 'OpenShift Cluster'
-    cmd: 'oc expose service/nodejs-welcome -n nodejs-welcome-image'
+    cmd: 'oc create route edge --service=nodejs-welcome -n nodejs-welcome-image'
 
 - task: redhat.openshift-vsts.oc-cmd-task.oc-cmd@3
   displayName: 'Create Namespace - STI Build'
@@ -72,4 +72,4 @@ steps:
   displayName: 'Expose Route - STI Build'
   inputs:
     openshiftService: 'OpenShift Cluster'
-    cmd: 'oc expose service/nodejs-welcome -n nodejs-welcome-sti'
+    cmd: 'oc create route edge --service=nodejs-welcome -n nodejs-welcome-sti'
