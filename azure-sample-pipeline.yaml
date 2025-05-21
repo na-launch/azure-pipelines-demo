@@ -10,4 +10,5 @@ steps:
     connectionType: 'OpenShift Connection Service'
     openshiftService: 'my-ocp-connection'
     cmd: 'oc get sa -n test-pipelines'
+    version: '4.14.51'
     ignoreFlag: true
